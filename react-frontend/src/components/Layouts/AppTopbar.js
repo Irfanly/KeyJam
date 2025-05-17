@@ -9,6 +9,7 @@ import { Avatar } from "primereact/avatar";
 import { RadioButton } from "primereact/radiobutton";
 import { Tag } from "primereact/tag";
 import "./Notification.css";
+import guitarLogo from "../../assets/logo/guitar.svg";
 import NotificationMenu from "./NotificationMenu.js";
 
 const AppTopbar = (props) => {
@@ -322,7 +323,7 @@ const AppTopbar = (props) => {
     <div className="layout-topbar">
       <Link to="/project">
         <div className="cursor-pointer min-w-max flex align-items-end">
-          <img src={"./assets/logo/cb-logo.svg"} height={30} className="mb-1" />
+          <img src={guitarLogo} height={30} className="mb-1" />
           <h3
             className="text-red-500"
             style={{ fontFamily: "MarlinGeo", fontWeight: "bolder", margin: 0 }}

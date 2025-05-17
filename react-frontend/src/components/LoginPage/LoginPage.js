@@ -61,7 +61,7 @@ const LoginPage = (props) => {
                         console.error('Failed to save login history:', historyError);
                     }
     
-                    navigate('/project');
+                    navigate('/dashboard');
                     setLoading(false);
                 })
                 .catch((error) => {

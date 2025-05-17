@@ -100,32 +100,34 @@ import SingleLessonsPage from "../components/app_components/LessonsPage/SingleLe
 import LessonProjectLayoutPage from "../components/app_components/LessonsPage/LessonProjectLayoutPage";
 import SingleSongFoldersPage from "../components/app_components/SongFoldersPage/SingleSongFoldersPage";
 import SongFolderProjectLayoutPage from "../components/app_components/SongFoldersPage/SongFolderProjectLayoutPage";
+import LandingPage from '../components/landingPage/landingPage';
 //  ~cb-add-import~
 
 const MyRouter = (props) => {
     return (
         <Routes>
-            <Route path="/" exact element={props.isLoggedIn ? <DashboardAdminControl /> : <LoginPage />} />
-            <Route path="/login" exact element={props.isLoggedIn === true ? <DashboardAdminControl /> : <LoginPage />} />
+            {/* <Route path="/" exact element={props.isLoggedIn ? <DashboardAdminControl /> : <LoginPage />} /> */}
+            <Route path="/" exact element={<LandingPage/>} />
+            {/* <Route path="/login" exact element={props.isLoggedIn === true ? <DashboardAdminControl /> : <LoginPage />} /> */}
             <Route path="/reset/:singleChangeForgotPasswordId" exact element={<ResetPage />} />
             <Route path="/signup" exact element={<SignUpPage />} />
             <Route path="/maintenance" exact element={<MaintenancePage />} />
             <Route path="/login-faq" exact element={<LoginFaqPage />} />
 
-            <Route element={<ProtectedRoute redirectPath={'/login'} />}>
-            <Route path="/project" exact element={<DashboardAdminControl />} />
+            <Route element={<ProtectedRoute redirectPath={'/dashboard'} />}>
+            <Route path="/project" exact element={<Dashboard />} />
                 // user details
                 <Route path="/account" exact element={<Account />} />
                 <Route path="/users/:singleUsersId" exact element={<SingleUsersPage />} />
                 <Route path="/users" exact element={<UserProjectLayoutPage />} />
 
                 // myapp
-<Route path="/chordSheets/:singleChordSheetsId" exact element={<SingleChordSheetsPage />} />
-<Route path="/chordSheets" exact element={<ChordSheetProjectLayoutPage />} />
-<Route path="/lessons/:singleLessonsId" exact element={<SingleLessonsPage />} />
-<Route path="/lessons" exact element={<LessonProjectLayoutPage />} />
-<Route path="/songFolders/:singleSongFoldersId" exact element={<SingleSongFoldersPage />} />
-<Route path="/songFolders" exact element={<SongFolderProjectLayoutPage />} />
+                <Route path="/chordSheets/:singleChordSheetsId" exact element={<SingleChordSheetsPage />} />
+                <Route path="/chordSheets" exact element={<ChordSheetProjectLayoutPage />} />
+                <Route path="/lessons/:singleLessonsId" exact element={<SingleLessonsPage />} />
+                <Route path="/lessons" exact element={<LessonProjectLayoutPage />} />
+                <Route path="/songFolders/:singleSongFoldersId" exact element={<SingleSongFoldersPage />} />
+                <Route path="/songFolders" exact element={<SongFolderProjectLayoutPage />} />
                 {/* ~cb-add-protected-route~ */}
 
                 // dashboards

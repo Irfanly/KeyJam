@@ -1,191 +1,91 @@
-import React, { useState, useEffect } from "react";
-import { classNames } from "primereact/utils";
-import { connect } from "react-redux";
-import RecentComp from "./RecentFavDashComp/RecentComp";
-import PinnedItems from "./RecentFavDashComp/FavComponent";
-import { TitleDash } from "./TitleDash";
-import EditDashComp from "./EditDashComp";
-import TotalComponent from "./RecentFavDashComp/TotalComponent";
-import StaffInfo from "../../assets/media/StaffInfo.png";
-import Mail from "../../assets/media/Mail.png";
-import Employees from "../../assets/media/Employees.png";
-import Generate from "../../assets/media/GenerateReports.png";
-import LineChart from "./Charts/LineChart";
-import BarChart from "./Charts/BarChart";
-import TeamMembers from "./TabView/TeamMembers";
-import Drag from "../../assets/media/Drag.png";
-import ChartPopup from "./PopUpComp/ChartPopup";
-import MultipleChart from "./TabView/MultipleCharts";
-import ProjectLayout from "../Layouts/ProjectLayout";
+import React, { useEffect, useState } from "react";
+import { Plus, Guitar, Music } from "lucide-react";
+import ProjectLayout from "../Layouts/ProjectLayout"; // Adjust path as needed
 
-export const Dashboard = (props) => {
-  const [isEdit, setIsEdit] = useState(false);
-  const [ActiveTab, setActiveTab] = useState(0);
-  const [showCard, setShowCard] = useState(false);
+// Placeholder fetch function
+const fetchRecentChordSheets = () => {
+  // Simulate fetch delay
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve([
+        { id: 1, title: "Let It Be", artist: "The Beatles" },
+        { id: 2, title: "Stand By Me", artist: "Ben E. King" },
+        { id: 3, title: "Someone Like You", artist: "Adele" },
+        { id: 4, title: "Canon in D", artist: "Pachelbel" },
+      ]);
+    }, 1000);
+  });
+};
+
+const Dashboard = () => {
+  const [recentChords, setRecentChords] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    get();
-  });
-
-  const get = async () => {
-    const cache = await props.get();
-    // console.log(props.cache);
-  };
-
-  const handlePopUp = () => {
-    setShowCard(!showCard);
-  };
-
-  // const recentItems = [
-  //   { text: "Staff Info", subtext: "Notification", src: StaffInfo },
-  //   { text: "DynaLoader", subtext: "User Management", src: Mail },
-  //   { text: "Job Ques", subtext: "Reports", src: Employees },
-  // ];
-
-  const recentItems = props.cache.pastTabsAry?.map((i) => {
-    return {
-      text: i.label,
-      subtext: "Notification",
-      src: i.src,
-    };
-  });
-
-  // const pinnedItems = [
-  //   { text: "Generate Templates", subtext: "Reports", src: Generate },
-  // ];
-
-  const pinnedItems = props.cache.pastTabsAry?.map((i) => {
-    return {
-      text: i.label,
-      subtext: "Messaging",
-      src: i.icon,
-    };
-  });
-
-  const teamMembers = [
-    {
-      email: "nur.fatin@example.com",
-      verificationCode: "1234",
-      resendCode: "3",
-      name: "Nur Fatin Nabilah",
-      status: "Active",
-    },
-    {
-      email: "john.doe@example.com",
-      verificationCode: "5678",
-      resendCode: "1",
-      name: "John Doe",
-      status: "Pending set up",
-    },
-    {
-      email: "jane.smith@example.com",
-      verificationCode: "9101",
-      resendCode: "1",
-      name: "Jane Smith",
-      status: "Deactivated",
-    },
-    {
-      email: "alice.johnson@example.com",
-      verificationCode: "1121",
-      resendCode: "2",
-      name: "Alice Johnson",
-      status: "Active",
-    },
-  ];
-
-  const tabs = [
-    { label: "To User", src: Drag },
-    { label: "Content", src: Drag },
-    { label: "Read", src: Drag },
-  ];
+    fetchRecentChordSheets().then((data) => {
+      setRecentChords(data);
+      setLoading(false);
+    });
+  }, []);
 
   return (
     <ProjectLayout>
-    <div className="p-2 md:p-4">
-      {/* Title and Edit section */}
-      <div className="mb-2 flex justify-content-between align-items-center">
-        <TitleDash user={props.user} />
-        <EditDashComp isEdit={isEdit} setIsEdit={setIsEdit} />
-      </div>
-
-      <div className="surface-border border-round surface-card">
-        <div className="grid">
-          {/* Recent Component */}
-          <div className="col-12 md:col-4 mb-3">
-            <RecentComp
-              title={"Recent"}
-              isEdit={isEdit}
-              recentItems={recentItems}
-            />
-          </div>
-
-          {/* Pinned Items Component */}
-          <div className="col-12 md:col-4 mb-3">
-            <PinnedItems
-              Pinned={"Pinned Items"}
-              isEdit={isEdit}
-              pinnedItems={pinnedItems}
-            />
-          </div>
-
-          {/* Total Component */}
-          <div className="col-12 md:col-4">
-            <TotalComponent
-              TotalComp={"Workforce Summary"}
-              isEdit={isEdit}
-              total={250}
-            />
-          </div>
+      <div className="p-6 space-y-8">
+        {/* Welcome Section */}
+        <div className="bg-gray-100 p-6 rounded-lg text-center shadow-sm">
+          <h1 className="text-2xl font-semibold">Welcome back, Irfan</h1>
+          <p className="text-lg text-gray-600 mt-1">Ready to start Jamming ???</p>
         </div>
-      </div>
 
-      {/* Charts Section with integrated ChartPopup */}
-      <div>
-        <div className="mb-3">
-          <ChartPopup isEdit={isEdit} setIsEdit={setIsEdit} />
-        </div>
-        {showCard && <PopupCard />}
-        <div className="grid">
-          {/* Line Chart */}
+        {/* Recently Opened Chord Sheets */}
+        <section>
+          <h2 className="text-xl font-semibold mb-4">Recently Opened Chord Sheets</h2>
 
-          {/* <div className="col-12 md:col-8 mb-3 relative">
-            <LineChart name={"Sales Orders"} isEdit={isEdit} />
-          </div> */}
+          {loading ? (
+            <p>Loading...</p>
+          ) : recentChords.length === 0 ? (
+            <div className="text-center text-gray-600">
+              No recent chord sheets found. <br />
+              <button className="mt-2 text-blue-600 underline hover:text-blue-800">
+                Upload a new song →
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {recentChords.map((chord, idx) => (
+                <div
+                  key={idx}
+                  className="bg-gray-100 p-4 rounded-lg hover:shadow-md transition"
+                >
+                  <p className="font-medium">{chord.title}</p>
+                  <p className="text-sm text-gray-500">{chord.artist}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
 
-          {/* Bar Chart */}
-          {/* <div className="col-12 md:col-4 mb-3">
-            <BarChart total={"Total Users"} isEdit={isEdit} />
-          </div> */}
-          <div className="col-12 md:col-8 mb-3 relative">
-            <MultipleChart />
+        {/* Quick Access */}
+        <section>
+          <h2 className="text-xl font-semibold mb-4">Quick Access</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <button className="bg-white border rounded-lg p-6 flex flex-col items-center gap-2 hover:shadow-md transition">
+              <Plus className="w-6 h-6" />
+              <span className="text-sm font-medium">Upload New Song</span>
+            </button>
+            <button className="bg-white border rounded-lg p-6 flex flex-col items-center gap-2 hover:shadow-md transition">
+              <Guitar className="w-6 h-6" />
+              <span className="text-sm font-medium">Songbook</span>
+            </button>
+            <button className="bg-white border rounded-lg p-6 flex flex-col items-center gap-2 hover:shadow-md transition">
+              <Music className="w-6 h-6" />
+              <span className="text-sm font-medium">Explore Chords</span>
+            </button>
           </div>
-        </div>
+        </section>
       </div>
-
-      {/* Team Members Section */}
-      <div>
-        <TeamMembers
-          teamMembers={teamMembers}
-          tabs={tabs}
-          ActiveTab={ActiveTab}
-          setActiveTab={setActiveTab}
-          isEdit={isEdit}
-        />
-      </div>
-    </div>
     </ProjectLayout>
   );
 };
 
-const mapState = (state) => {
-  const { user, isLoggedIn } = state.auth;
-  const { cache } = state.cache;
-  return { user, isLoggedIn, cache };
-};
-const mapDispatch = (dispatch) => ({
-  alert: (data) => dispatch.toast.alert(data),
-  get: () => dispatch.cache.get(),
-});
-
-
-export default connect(mapState, mapDispatch)(Dashboard);
+export default Dashboard;

@@ -11,7 +11,7 @@ import LoadingWrapper from "./MyRouter/wrappers/LoadingWrapper";
 import ToastWrapper from "./MyRouter/wrappers/ToastWrapper";
 import StartupWrapper from "./MyRouter/wrappers/StartupWrapper";
 
-import "primereact/resources/themes/lara-light-cyan/theme.css";
+import "primereact/resources/themes/arya-purple/theme.css";
 import "primereact/resources/primereact.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";

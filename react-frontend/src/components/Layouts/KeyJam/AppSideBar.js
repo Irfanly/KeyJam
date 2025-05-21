@@ -64,15 +64,15 @@ const AppSideBar = (props) => {
                               onClick={() => setOpen(!open)} 
                               className="p-2 rounded-full hover:bg-gray-100"
                             >
-                              <MenuIcon size={20} className="text-gray-600" />
+                              <MenuIcon size={20} />
                             </button>
                         </div>
 
                         {/* Navigation links */}
                         <nav>
-                            <ul className="space-y-2">
+                            <div className="space-y-2">
                                 {menuItems.map((item) => (
-                                    <li key={item.key}>
+                                    <div key={item.key}>
                                         <a 
                                           href={item.path}
                                           className={classNames(
@@ -91,9 +91,9 @@ const AppSideBar = (props) => {
                                             )}
                                             <Ripple />
                                         </a>
-                                    </li>
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         </nav>
                     </div>
                     

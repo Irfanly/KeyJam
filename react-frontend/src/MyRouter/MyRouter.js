@@ -101,6 +101,7 @@ import LessonProjectLayoutPage from "../components/app_components/LessonsPage/Le
 import SingleSongFoldersPage from "../components/app_components/SongFoldersPage/SingleSongFoldersPage";
 import SongFolderProjectLayoutPage from "../components/app_components/SongFoldersPage/SongFolderProjectLayoutPage";
 import LandingPage from '../components/landingPage/landingPage';
+import ChordLibrary from '../components/keyjam/ChordLibrary';
 //  ~cb-add-import~
 
 const MyRouter = (props) => {
@@ -108,11 +109,14 @@ const MyRouter = (props) => {
         <Routes>
             {/* <Route path="/" exact element={props.isLoggedIn ? <DashboardAdminControl /> : <LoginPage />} /> */}
             <Route path="/" exact element={<LandingPage/>} />
-            {/* <Route path="/login" exact element={props.isLoggedIn === true ? <DashboardAdminControl /> : <LoginPage />} /> */}
+            <Route path="/login" exact element={props.isLoggedIn === true ? <DashboardAdminControl /> : <LoginPage />} />
             <Route path="/reset/:singleChangeForgotPasswordId" exact element={<ResetPage />} />
             <Route path="/signup" exact element={<SignUpPage />} />
             <Route path="/maintenance" exact element={<MaintenancePage />} />
             <Route path="/login-faq" exact element={<LoginFaqPage />} />
+
+            {/* Testing route */}
+            <Route path="/chordLibrary" exact element={<ChordLibrary />} />
 
             <Route element={<ProtectedRoute redirectPath={'/dashboard'} />}>
             <Route path="/project" exact element={<Dashboard />} />

@@ -131,11 +131,11 @@ const Dashboard = (props) => {
               <span className="text-sm font-medium">Upload New Song</span>
             </button>
             <button onClick={() => navigate("/songFolders")} className="bg-white border rounded-lg p-6 flex flex-col items-center gap-2 hover:shadow-md transition">
-              <Guitar className="w-6 h-6 text-indigo-500" />
+              <Music className="w-6 h-6 text-indigo-500" />
               <span className="text-sm font-medium">Songbook</span>
             </button>
             <button onClick={() => navigate("/chordLibrary")} className="bg-white border rounded-lg p-6 flex flex-col items-center gap-2 hover:shadow-md transition">
-              <Music className="w-6 h-6 text-indigo-500" />
+              <Guitar className="w-6 h-6 text-indigo-500" />
               <span className="text-sm font-medium">Explore Chords</span>
             </button>
           </div>

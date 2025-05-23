@@ -100,8 +100,10 @@ import SingleLessonsPage from "../components/app_components/LessonsPage/SingleLe
 import LessonProjectLayoutPage from "../components/app_components/LessonsPage/LessonProjectLayoutPage";
 import SingleSongFoldersPage from "../components/app_components/SongFoldersPage/SingleSongFoldersPage";
 import SongFolderProjectLayoutPage from "../components/app_components/SongFoldersPage/SongFolderProjectLayoutPage";
+
 import LandingPage from '../components/landingPage/landingPage';
 import ChordLibrary from '../components/keyjam/ChordLibrary';
+import ChordStudio from '../components/keyjam/ChordStudio';
 //  ~cb-add-import~
 
 const MyRouter = (props) => {
@@ -117,6 +119,7 @@ const MyRouter = (props) => {
 
             {/* Testing route */}
             <Route path="/chordLibrary" exact element={<ChordLibrary />} />
+            <Route path="/chordStudio" exact element={<ChordStudio />} />
 
             <Route element={<ProtectedRoute redirectPath={'/dashboard'} />}>
             <Route path="/project" exact element={<Dashboard />} />

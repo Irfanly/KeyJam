@@ -1,7 +1,7 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, createUserContent, createPartFromUri } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: process.env.REACT_APP_GEMINI_API_KEY });
-const model = "gemini-2.0-flash-lite";
+const model = "gemini-2.0-flash";
 
 class GeminiService {
   async generatePrompt(prompt) {
@@ -15,8 +15,17 @@ class GeminiService {
   }
   //Analyze audio files
   async analyzeAudio(fileUrl, songKey) {
+    console.log("Analyzing audio file:", fileUrl, "with song key:", songKey);
+    if (!fileUrl || !songKey) {
+      throw new Error("File URL and song key are required for analysis.");
+    }
+    // Upload the audio file to Gemini
+    const audioUpload = await ai.files.upload({
+      file: fileUrl,
+    });
+
     const prompt = 
-      `You are a music theory assistant. A musician has provided an audio file of a song along with its musical key. 
+      `You are a music theory assistant. A musician has provided an audio file of a song along with its musical key. The file is attached. 
 
       Your task is to:
       1. Analyze the audio to identify the chord progression throughout the song.
@@ -25,18 +34,20 @@ class GeminiService {
       4. Also provide a summary of the overall chord progression.
 
       Song Key: ${songKey}  
-      Audio File (URL): ${fileUrl}
 
       Please begin the analysis. Make the output musician-friendly.`;
 
     try {
       const response = await ai.models.generateContent({
-        model: this.model,
-        prompt: prompt,
+        model: model,
+        contents: createUserContent([
+          createPartFromUri(audioUpload.uri, audioUpload.mimeType),
+          prompt,
+        ]),
       });
-      const { text } = response;
-      console.log("Generated text:", text);
-      // return text;
+
+      console.log("Generated text:", response.text);
+      return response.text;
     } catch (error) {
       console.error("Error analyzing audio:", error);
       throw error;

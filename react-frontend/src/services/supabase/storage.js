@@ -5,7 +5,9 @@ export class StorageService {
   async uploadFile(bucket, filePath, file) {
     const { data, error } = await supabase.storage
       .from(bucket)
-      .upload(filePath, file);
+      .upload(filePath, file, {
+        upsert: true, // Overwrite if file already exists
+      });
 
     if (error) {
       throw new Error(`Error uploading file: ${error.message}`);
@@ -23,6 +25,7 @@ export class StorageService {
     if (error) {
       throw new Error(`Error getting public URL: ${error.message}`);
     }
+    console.log('Data:', data);
 
     return data.publicUrl;
   }

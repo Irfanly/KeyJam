@@ -36,14 +36,14 @@ const AppSideBar = (props) => {
       {
         icon: <Music size={20} />,
         label: "Chord Sheets",
-        key: "chord-sheets",
-        path: "/chord-sheets"
+        key: "chordSheets",
+        path: "/chordSheets"
       },
       {
         icon: <Library size={20} />,
         label: "Chord Book",
-        key: "chord-book",
-        path: "/chord-book"
+        key: "chordBook",
+        path: "/chordBook"
       }
     ];
 

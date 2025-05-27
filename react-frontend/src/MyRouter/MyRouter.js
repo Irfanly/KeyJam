@@ -104,6 +104,7 @@ import SongFolderProjectLayoutPage from "../components/app_components/SongFolder
 import LandingPage from '../components/landingPage/landingPage';
 import ChordLibrary from '../components/keyjam/ChordLibrary';
 import ChordStudio from '../components/keyjam/ChordStudio';
+import ChordSheets from '../components/keyjam/ChordSheets';
 //  ~cb-add-import~
 
 const MyRouter = (props) => {
@@ -111,6 +112,7 @@ const MyRouter = (props) => {
         <Routes>
             {/* <Route path="/" exact element={props.isLoggedIn ? <DashboardAdminControl /> : <LoginPage />} /> */}
             <Route path="/" exact element={<LandingPage/>} />
+            <Route path="/dashboard" exact element={props.isLoggedIn === true ? <Dashboard /> : <LoginPage />} />
             <Route path="/login" exact element={props.isLoggedIn === true ? <DashboardAdminControl /> : <LoginPage />} />
             <Route path="/reset/:singleChangeForgotPasswordId" exact element={<ResetPage />} />
             <Route path="/signup" exact element={<SignUpPage />} />
@@ -120,6 +122,7 @@ const MyRouter = (props) => {
             {/* Testing route */}
             <Route path="/chordLibrary" exact element={<ChordLibrary />} />
             <Route path="/chordStudio" exact element={<ChordStudio />} />
+            <Route path="/chordSheets" exact element={<ChordSheets />} />
 
             <Route element={<ProtectedRoute redirectPath={'/dashboard'} />}>
             <Route path="/project" exact element={<Dashboard />} />
@@ -130,7 +133,7 @@ const MyRouter = (props) => {
 
                 // myapp
                 <Route path="/chordSheets/:singleChordSheetsId" exact element={<SingleChordSheetsPage />} />
-                <Route path="/chordSheets" exact element={<ChordSheetProjectLayoutPage />} />
+                {/* <Route path="/chordSheets" exact element={<ChordSheetProjectLayoutPage />} /> */}
                 <Route path="/lessons/:singleLessonsId" exact element={<SingleLessonsPage />} />
                 <Route path="/lessons" exact element={<LessonProjectLayoutPage />} />
                 <Route path="/songFolders/:singleSongFoldersId" exact element={<SingleSongFoldersPage />} />
@@ -138,7 +141,7 @@ const MyRouter = (props) => {
                 {/* ~cb-add-protected-route~ */}
 
                 // dashboards
-                <Route path="/dashboard" exact element={<Dashboard />} />
+                {/* <Route path="/dashboard" exact element={<Dashboard />} /> */}
                 <Route path="/DashboardAdminControl" exact element={<DashboardAdminControl />} />
                 <Route path="/DashboardCompanyData" exact element={<DashboardCompanyData />} />
                 <Route path="/DashboardDataManagement" exact element={<DashboardDataManagement />} />

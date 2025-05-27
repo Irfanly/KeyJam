@@ -245,7 +245,7 @@ const LoginPage = (props) => {
                     <div className="w-full px-3 mx-3 card md:px-7">
                         <div className="my-4 text-4xl font-semibold text-center text-primary">
                             {/* CodeBridge Image */}
-                            KeyJam: Website for Musician
+                            KeyJam
                         </div>
                         <div className="mt-6 text-center">
                             <h2 className="mb-4 text-2xl font-semibold">Forgot your password?</h2>

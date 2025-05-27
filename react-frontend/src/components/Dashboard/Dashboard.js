@@ -18,6 +18,7 @@ const Dashboard = (props) => {
     
     // Get current user ID from Redux state
     const userId = props.user?._id;
+    console.log("Current User ID:", userId);
     
     if (!userId) {
       console.error("User not authenticated or ID not available");
@@ -147,7 +148,8 @@ const Dashboard = (props) => {
 
 const mapState = (state) => {
   const { user, isLoggedIn } = state.auth;
-  return { user, isLoggedIn };
+  const { cache } = state.cache;
+  return { user, isLoggedIn, cache };
 };
 
 const mapDispatch = (dispatch) => ({

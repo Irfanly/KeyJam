@@ -105,6 +105,7 @@ import LandingPage from '../components/landingPage/landingPage';
 import ChordLibrary from '../components/keyjam/ChordLibrary';
 import ChordStudio from '../components/keyjam/ChordStudio';
 import ChordSheets from '../components/keyjam/ChordSheets';
+import ChordEditor from '../components/keyjam/ChordEditor';
 //  ~cb-add-import~
 
 const MyRouter = (props) => {
@@ -123,6 +124,7 @@ const MyRouter = (props) => {
             <Route path="/chordLibrary" exact element={<ChordLibrary />} />
             <Route path="/chordStudio" exact element={<ChordStudio />} />
             <Route path="/chordSheets" exact element={<ChordSheets />} />
+            <Route path='/chordSheets/:singleChordSheetsId' exact element={<ChordEditor />} />
 
             <Route element={<ProtectedRoute redirectPath={'/dashboard'} />}>
             <Route path="/project" exact element={<Dashboard />} />
@@ -132,7 +134,7 @@ const MyRouter = (props) => {
                 <Route path="/users" exact element={<UserProjectLayoutPage />} />
 
                 // myapp
-                <Route path="/chordSheets/:singleChordSheetsId" exact element={<SingleChordSheetsPage />} />
+                {/* <Route path="/chordSheets/:singleChordSheetsId" exact element={<SingleChordSheetsPage />} /> */}
                 {/* <Route path="/chordSheets" exact element={<ChordSheetProjectLayoutPage />} /> */}
                 <Route path="/lessons/:singleLessonsId" exact element={<SingleLessonsPage />} />
                 <Route path="/lessons" exact element={<LessonProjectLayoutPage />} />

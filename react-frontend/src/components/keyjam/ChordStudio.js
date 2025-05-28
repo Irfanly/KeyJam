@@ -1,15 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import _ from 'lodash';
+import client from "../../services/restClient";
 import storage from '../../services/supabase/storage';
 import gemini from '../../services/gemini/prompt';
 import ProjectLayout from "../Layouts/ProjectLayout";
-import { Card }  from 'primereact/card';
+import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { ProgressBar } from 'primereact/progressbar';
 import { Toast } from 'primereact/toast';
 import { FileAudio, Music, AudioWaveform, HelpCircle, Guitar } from 'lucide-react';
-import { Navigate } from 'react-router-dom';
 
 const musicalKeys = [
   { label: 'C Major', value: 'C' }, { label: 'G Major', value: 'G' }, { label: 'D Major', value: 'D' },
@@ -20,25 +23,68 @@ const musicalKeys = [
   { label: 'C# Minor', value: 'C#m' }, { label: 'G# Minor', value: 'G#m' }, { label: 'D Minor', value: 'Dm' },
 ];
 
-const ChordStudio = () => {
+const ChordStudio = (props) => {
   const [file, setFile] = useState(null);
   const [songKey, setSongKey] = useState('');
   const [songTitle, setSongTitle] = useState('');
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState('');
+  const [artist, setArtist] = useState('Unknown');
+  const [error, setError] = useState({});
+  const navigate = useNavigate();
   const toast = useRef(null);
 
-  const chordSheetData = {
-    title: songTitle || "Untitled Song",
-    artist: "Unknown",
-    key: songKey,
-    audioFileName: file ? file.name : "",
-    audioFileUrl: audioUrl || "",
-    lyrics: "",
-    lyricsWithChords: output,
-    suggestedChords: output,
-  }
+  const getChordSheetData = () => {
+    return {
+      userId: props.user?._id,
+      title: songTitle || "Untitled Song",
+      artist: artist,
+      key: songKey,
+      audioFileName: file ? file.name : "",
+      audioFileUrl: audioUrl || "",
+      lyrics: output || "",  // extract just lyrics if possible
+      lyricsWithChords: output || "",
+      suggestedChords: output || "",
+      createdBy: props.user?._id,
+      updatedBy: props.user?._id
+    };
+  };
+
+  const validate = () => {
+    let ret = true;
+    const error = {};
+
+    if (_.isEmpty(songKey)) {
+      error["key"] = `Song key is required`;
+      ret = false;
+    }
+
+    if (_.isEmpty(songTitle)) {
+      error["title"] = `Song title is required`;
+      ret = false;
+    }
+
+    // Only validate output if we're trying to save
+    if (_.isEmpty(output)) {
+      error["output"] = `Generated chord analysis is required`;
+      ret = false;
+    }
+
+    if (!ret) setError(error);
+    return ret;
+  };
+
+  useEffect(() => {
+    if (!props.user?._id) {
+      // User not loaded yet, don't fetch
+      return;
+    }
+    props.show();
+    const userId = props.user._id;
+    console.log("User ID:", userId);
+    props.hide();
+  }, [props.user]);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -93,32 +139,54 @@ const ChordStudio = () => {
         detail: 'Chord suggestions generated!',
         life: 3000
       });
-      // Optionally save chordSheetData to your database here
-      const saved = await client.service('chordSheets').create({
-        ...chordSheetData,
-        title: songTitle || "Untitled Song"
+    } catch (error) {
+      console.error('Error:', error);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: error.message || 'An error occurred during analysis',
+        life: 4000
       });
-      console.log('Chord sheet saved:', saved);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Separate function for saving to database
+  const saveChordSheet = async () => {
+    if(!validate()) {
+      toast.current.show({
+        severity: 'error',
+        summary: 'Validation Error',
+        detail: 'Please complete all required fields',
+        life: 3000
+      });
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const chordSheetData = getChordSheetData();
+      const result = await client.service("chordSheets").create(chordSheetData);
+      
       toast.current.show({
         severity: 'success',
         summary: 'Saved',
         detail: 'Chord sheet saved successfully!',
         life: 3000
       });
-
-      if (saved) {
-        Navigate(`/chord-sheets/${saved._id}`); // Redirect to chord sheets page after saving
-      } 
-        
-
+      
+      navigate(`/chordSheets`);
+      
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error saving chord sheet:', error);
       toast.current.show({
         severity: 'error',
-        summary: 'Error',
-        detail: error.message || 'An error occurred',
+        summary: 'Save Error',
+        detail: error.message || 'Failed to save chord sheet',
         life: 4000
       });
+      setError(error.errors || { general: error.message || "Failed to save" });
     } finally {
       setLoading(false);
     }
@@ -133,12 +201,14 @@ const ChordStudio = () => {
             <AudioWaveform className="text-indigo-500" size={32} />
             <h1 className="text-2xl font-bold text-indigo-700">Chord Studio</h1>
           </div>
+          
           <div className="bg-blue-50 rounded p-4 mb-6 flex items-center gap-2">
             <HelpCircle size={18} className="text-blue-400" />
             <span className="text-sm text-blue-700">
               Upload your audio (optional) and select the song key to generate chord progressions and analysis.
             </span>
           </div>
+          
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Song Title</label>
@@ -148,7 +218,19 @@ const ChordStudio = () => {
                 placeholder="Enter song title"
                 className="w-full"
               />
+              {error.title && <small className="p-error">{error.title}</small>}
             </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Artist</label>
+              <InputText
+                value={artist}
+                onChange={(e) => setArtist(e.target.value)}
+                placeholder="Artist name"
+                className="w-full"
+              />
+            </div>            
+            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Audio File (optional)</label>
               <div className="flex items-center gap-3">
@@ -171,6 +253,7 @@ const ChordStudio = () => {
                 )}
               </div>
             </div>
+            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Song Key <span className="text-red-500">*</span></label>
               <Dropdown
@@ -181,7 +264,9 @@ const ChordStudio = () => {
                 className="w-full"
                 required
               />
+              {error.key && <small className="p-error">{error.key}</small>}
             </div>
+            
             <Button
               type="submit"
               label={loading ? "Analyzing..." : "Analyze"}
@@ -189,12 +274,14 @@ const ChordStudio = () => {
               className="w-full"
               disabled={loading}
             />
+            
             {loading && (
               <div className="mt-2">
                 <ProgressBar mode="indeterminate" style={{ height: '6px' }} />
               </div>
             )}
           </form>
+          
           {audioUrl && (
             <div className="mt-6">
               <div className="flex items-center gap-2 mb-2">
@@ -206,12 +293,37 @@ const ChordStudio = () => {
               </audio>
             </div>
           )}
+          
           {output && (
-            <div className="mt-8">
-              <h2 className="text-xl font-semibold text-indigo-700 mb-2 flex items-center gap-2">
-                <Guitar size={20} /> Chord Suggestions & Analysis
-              </h2>
-              <pre className="bg-gray-50 border rounded p-4 whitespace-pre-wrap text-sm overflow-x-auto">{output}</pre>
+            <>
+              <div className="mt-8">
+                <h2 className="text-xl font-semibold text-indigo-700 mb-2 flex items-center gap-2">
+                  <Guitar size={20} /> Chord Suggestions & Analysis
+                </h2>
+                <pre className="bg-gray-50 border rounded p-4 whitespace-pre-wrap text-sm overflow-x-auto">{output}</pre>
+                {error.output && <small className="p-error">{error.output}</small>}
+              </div>
+              
+              <div className="mt-6">
+                <Button 
+                  label="Save Chord Sheet" 
+                  icon="pi pi-save" 
+                  className="p-button-success w-full"
+                  onClick={saveChordSheet}
+                  disabled={loading}
+                />
+              </div>
+            </>
+          )}
+          
+          {!_.isEmpty(error) && Object.keys(error).length > 0 && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded">
+              <h3 className="text-sm font-medium text-red-800">Please fix the following errors:</h3>
+              <ul className="mt-2 pl-5 text-sm text-red-700 list-disc">
+                {Object.keys(error).map(key => (
+                  <li key={key}>{error[key]}</li>
+                ))}
+              </ul>
             </div>
           )}
         </Card>
@@ -220,4 +332,16 @@ const ChordStudio = () => {
   );
 };
 
-export default ChordStudio;
+const mapState = (state) => {
+  const { user, isLoggedIn } = state.auth;
+  const { cache } = state.cache;
+  return { user, isLoggedIn, cache };
+};
+
+const mapDispatch = (dispatch) => ({
+  alert: (data) => dispatch.toast.alert(data),
+  show: () => dispatch.loading.show(),
+  hide: () => dispatch.loading.hide(),
+});
+
+export default connect(mapState, mapDispatch)(ChordStudio);

@@ -195,7 +195,7 @@ const ChordStudio = (props) => {
   return (
     <ProjectLayout>
       <Toast ref={toast} />
-      <div className="max-w-3xl mx-auto py-8 px-4">
+      <div className="max-w-screen mx-auto py-8 px-10 md:px-20 lg:px-32">
         <Card className="shadow-lg">
           <div className="flex items-center gap-3 mb-6">
             <AudioWaveform className="text-indigo-500" size={32} />

@@ -69,6 +69,7 @@ const uploader = require("./uploader/uploader.service.js");
 const chordSheets = require("./chordSheets/chordSheets.service.js");
 const lessons = require("./lessons/lessons.service.js");
 const songFolders = require("./songFolders/songFolders.service.js");
+const songAnalysis = require("./songAnalysis/songAnalysis.service.js");
 // ~cb-add-require-service-name~
 
 // eslint-disable-next-line no-unused-vars
@@ -125,5 +126,6 @@ module.exports = function (app) {
   app.configure(chordSheets);
   app.configure(lessons);
   app.configure(songFolders);
+  app.configure(songAnalysis);
   // ~cb-add-configure-service-name~
 };

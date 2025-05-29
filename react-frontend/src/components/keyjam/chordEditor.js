@@ -259,7 +259,7 @@ const ChordEditor = (props) => {
             </div>
             
             {/* Right Column - Chord Editor */}
-            <div className="lg:col-span-3">
+            <div className="mx-auto lg:col-span-3">
               <Card className="shadow-lg bg-white overflow-hidden">
                 <div className="bg-gray-50 p-3 -mx-4 -mt-4 mb-4 border-b border-gray-200 flex justify-between items-center">
                   <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">

@@ -148,7 +148,7 @@ const ChordEditor = (props) => {
     <ProjectLayout>
       <Toast ref={toast} />
       <div className="min-h-screen py-6">
-        <div className="max-w-screen mx-auto px-8">
+        <div className="container mx-auto px-4">
           {/* Header Bar with Controls */}
           <div className="rounded-lg shadow-lg p-4 mb-4 flex items-center justify-between ">
             <div className="flex items-center gap-3">

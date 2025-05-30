@@ -9,6 +9,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { Toast } from 'primereact/toast';
 import { Tag } from 'primereact/tag';
 import { Book, Search, Youtube, Music, Filter, Video, Plus } from 'lucide-react';
+import { PrimeIcons } from 'primereact/api';
 import ProjectLayout from '../Layouts/ProjectLayout';
 import client from '../../services/restClient';
 
@@ -38,6 +39,7 @@ const LessonsList = (props) => {
       })
       .then(result => {
         setLessons(result.data || []);
+        console.log('Fetched lessons:', result.data);
         
         // Extract unique categories
         const uniqueCategories = [...new Set(result.data.map(lesson => lesson.category))];
@@ -56,10 +58,10 @@ const LessonsList = (props) => {
       });
       
       setLoading(false);
-  }, []);
+  }, [props.user?._id]);
 
   const viewLesson = (lessonId) => {
-    navigate(`/keyjam/lessons/${lessonId}`);
+    navigate(`/lessons/${lessonId}`);
   };
 
   const getCategoryIcon = (category) => {
@@ -72,6 +74,12 @@ const LessonsList = (props) => {
         return <Book size={18} />;
       case 'vocals':
         return <Music size={18} />;
+      case 'drums':
+        return <Music size={18} />;
+      case 'bass':
+        return <Music size={18} />;
+      case 'other':
+        return <Video size={18} />;
       default:
         return <Video size={18} />;
     }
@@ -87,6 +95,12 @@ const LessonsList = (props) => {
         return 'success';
       case 'vocals':
         return 'danger';
+      case 'drums':
+        return 'primary';
+      case 'bass':
+        return 'secondary';
+      case 'other':
+        return 'help';
       default:
         return 'secondary';
     }
@@ -113,7 +127,7 @@ const LessonsList = (props) => {
 
         {/* Suppose to only be visible to admin */}
           <button
-            onClick={() => navigate('/keyjam/lessons/new')}
+            onClick={() => navigate('/lessons/create')}
             className="p-button p-button-success flex align-items-center gap-2"
           >
             <Plus size={16} />
@@ -145,43 +159,91 @@ const LessonsList = (props) => {
 
   const itemTemplate = (lesson) => {
     return (
-      <div className="col-12 sm:col-6 lg:col-4 xl:col-3 p-2">
-        <Card 
-          className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer h-full"
+      <div className="mb-4">
+        <div 
+          className="bg-white border border-gray-200 container rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
           onClick={() => viewLesson(lesson._id)}
         >
-          <div className="flex flex-column h-full">
-            <div className="mb-3">
-              <Tag 
-                value={lesson.category} 
-                severity={getCategoryColor(lesson.category)}
-                icon={getCategoryIcon(lesson.category)}
-              />
-            </div>
-            
-            <div className="flex-grow">
-              <h3 className="text-xl font-semibold mb-2 text-gray-800 line-clamp-2">
-                {lesson.title}
-              </h3>
-            </div>
-            
-            <div className="flex justify-between items-center mt-4 pt-3 border-t border-gray-100">
-              <div className="flex items-center">
-                <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium">
-                  {lesson.createdBy?.name?.charAt(0) || '?'}
+          <div className="flex flex-col md:flex-row">
+            {/* Left side - YouTube thumbnail with overlay */}
+            <div className="md:w-1/4 relative">
+              <div className="aspect-video relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-black/40 to-transparent z-10"></div>
+                <div className="bg-gray-200 h-full w-full flex items-center justify-center">
+                  {lesson.youtubeUrl ? (
+                    <img
+                      src={`https://img.youtube.com/vi/${lesson.youtubeUrl.split('v=')[1].split('&')[0]}/hqdefault.jpg`}
+                      alt={lesson.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-gray-400 text-sm">No thumbnail available</div>
+                  )}
                 </div>
-                <span className="ml-2 text-sm text-gray-600">
-                  {lesson.createdBy?.name || 'Unknown Author'}
-                </span>
+                <div className="absolute bottom-2 left-2 z-20">
+                  <div className="flex items-center bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+                    <Youtube size={14} className="mr-1" />
+                    <span>Video Lesson</span>
+                  </div>
+                </div>
+                <div className="absolute top-2 right-2 z-20">
+                  <Tag 
+                    value={lesson.category} 
+                    severity={getCategoryColor(lesson.category)}
+                    icon={getCategoryIcon(lesson.category)}
+                    className="text-xs"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Right side - Lesson details */}
+            <div className="md:w-3/4 p-4 md:p-5 flex flex-col justify-between h-full">
+              <div>
+                <h3 className="text-left text-xl font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors">
+                  {lesson.title}
+                </h3>
+                
+                <p className="text-gray-600 text-sm line-clamp-3 text-justify">
+                  {lesson.content ? (
+                    <span dangerouslySetInnerHTML={{ 
+                      __html: lesson.content.replace(/<[^>]*>/g, ' ').substring(0, 250) + (lesson.content.length > 250 ? '...' : '')
+                    }} />
+                  ) : (
+                    "Click to view this lesson"
+                  )}
+                </p>
               </div>
               
-              <div className="flex items-center">
-                <Youtube size={16} className="mr-1 text-red-500" />
-                <span className="text-xs text-gray-500">Video Lesson</span>
+              <div className="flex items-center justify-between mt-2 pt-3 border-t border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium border border-indigo-200">
+                    {lesson.createdBy?.name?.charAt(0) || '?'}
+                  </div>
+                  <div className="ml-2">
+                    <span className="block text-sm font-medium text-gray-700">
+                      {lesson.createdBy?.name || 'Unknown Author'}
+                    </span>
+                    <span className="block text-xs text-gray-500">
+                      {new Date(lesson.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center text-xs text-indigo-600 font-medium">
+                  <span>View Lesson</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
-        </Card>
+        </div>
       </div>
     );
   };
@@ -189,59 +251,63 @@ const LessonsList = (props) => {
   return (
     <ProjectLayout>
       <Toast ref={toast} />
-      <div className="p-4 md:p-6">
-        <div className="max-w-8xl mx-auto">
+      <div className="p-4 md:p-6 min-h-screen">
+        <div className="container mx-auto">
           {renderHeader()}
           
-          <div className="mt-5">
-            {filteredLessons.length > 0 ? (
-              <DataView
-                value={filteredLessons}
-                itemTemplate={itemTemplate}
-                layout="grid"
-              />
+          <div className="mt-6">
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <ProgressSpinner style={{ width: '50px', height: '50px' }} strokeWidth="4" />
+              </div>
             ) : (
-              <div className="bg-white border border-gray-200 rounded-lg p-8 text-center shadow-sm">
-                {searchTerm || categoryFilter ? (
-                  // No results from search/filter
-                  <>
-                    <Search size={48} className="mx-auto mb-4 text-gray-400" />
-                    <h3 className="text-xl font-medium text-gray-700 mb-2">No lessons match your filters</h3>
-                    <p className="text-gray-500 mb-4 max-w-md mx-auto">
-                      We couldn't find any lessons matching your current search or category filter.
-                    </p>
-                    <div className="flex justify-center gap-3 mt-2">
-                      <button 
-                        onClick={() => {setSearchTerm(''); setCategoryFilter(null);}}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center gap-2"
-                      >
-                        <Filter size={16} />
-                        Clear Filters
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  // No lessons at all
-                  <>
-                    <Book size={48} className="mx-auto mb-4 text-indigo-400" />
-                    <h3 className="text-xl font-medium text-gray-700 mb-2">No lessons available yet</h3>
-                    <p className="text-gray-500 mb-4 max-w-md mx-auto">
-                      There are currently no lessons in our library. Check back soon as we're constantly adding new content!
-                    </p>
-                    {props.user?.role === 'admin' && (
+              filteredLessons.length > 0 ? (
+                <DataView
+                  value={filteredLessons}
+                  itemTemplate={itemTemplate}
+                  layout="list"
+                />
+              ) : (
+                <div className="bg-white border border-gray-200 rounded-lg p-8 text-center shadow-sm">
+                  {searchTerm || categoryFilter ? (
+                    // No results from search/filter
+                    <>
+                      <Search size={48} className="mx-auto mb-4 text-gray-400" />
+                      <h3 className="text-xl font-medium text-gray-700 mb-2">No lessons match your filters</h3>
+                      <p className="text-gray-500 mb-4 max-w-md mx-auto">
+                        We couldn't find any lessons matching your current search or category filter.
+                      </p>
                       <div className="flex justify-center gap-3 mt-2">
                         <button 
-                          onClick={() => navigate('/keyjam/lessons/new')}
+                          onClick={() => {setSearchTerm(''); setCategoryFilter(null);}}
+                          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                        >
+                          <Filter size={16} />
+                          Clear Filters
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    // No lessons at all
+                    <>
+                      <Book size={48} className="mx-auto mb-4 text-indigo-400" />
+                      <h3 className="text-xl font-medium text-gray-700 mb-2">No lessons available yet</h3>
+                      <p className="text-gray-500 mb-4 max-w-md mx-auto">
+                        There are currently no lessons in our library. Check back soon as we're constantly adding new content!
+                      </p>
+                      <div className="flex justify-center gap-3 mt-2">
+                        <button 
+                          onClick={() => navigate('/lessons/create')}
                           className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors flex items-center gap-2"
                         >
                           <Plus size={16} />
                           Create New Lesson
                         </button>
                       </div>
-                    )}
-                  </>
-                )}
-              </div>
+                    </>
+                  )}
+                </div>
+              )
             )}
           </div>
         </div>

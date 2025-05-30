@@ -107,6 +107,7 @@ import ChordStudio from '../components/keyjam/ChordStudio';
 import ChordSheets from '../components/keyjam/ChordSheets';
 import ChordEditor from '../components/keyjam/ChordEditor';
 import LessonsList from '../components/keyjam/LessonsList';
+import CreateLesson from '../components/keyjam/CreateLesson';
 //  ~cb-add-import~
 
 const MyRouter = (props) => {
@@ -127,6 +128,7 @@ const MyRouter = (props) => {
             <Route path="/chordSheets" exact element={<ChordSheets />} />
             <Route path='/chordSheets/:singleChordSheetsId' exact element={<ChordEditor />} />
             <Route path="/lessons" exact element={<LessonsList />} />
+            <Route path="/lessons/create" exact element={<CreateLesson />} />
 
             <Route element={<ProtectedRoute redirectPath={'/dashboard'} />}>
             <Route path="/project" exact element={<Dashboard />} />

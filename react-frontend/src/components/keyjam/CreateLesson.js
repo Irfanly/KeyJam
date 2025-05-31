@@ -222,7 +222,7 @@ const CreateLesson = (props) => {
               type="button"
               label="Cancel"
               className="p-button-text mr-3 text-gray-600"
-              onClick={() => navigate('/keyjam/lessons')}
+              onClick={() => navigate('/lessons')}
             />
             <Button
               type="submit"

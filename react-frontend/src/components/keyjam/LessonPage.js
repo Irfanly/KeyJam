@@ -230,7 +230,7 @@ const LessonPage = (props) => {
                 />
                 <div>
                   <h3 className="text-lg font-medium text-gray-900 mb-1">
-                    {creator?.firstName ? `${creator.firstName} ${creator.lastName || ''}` : 'Instructor'}
+                    {creator? creator.name : 'Instructor'}
                   </h3>
                   <p className="text-sm text-gray-500">{creator?.email || 'KeyJam Instructor'}</p>
                 </div>

@@ -28,7 +28,6 @@ module.exports = function (app) {
         },
 
         suggestions: { type: String },    // Tips for improvement (e.g. "Consider adding bridge")
-        rawOutput: { type: Schema.Types.Mixed } // Full Gemini response (optional)
       },
 
       createdBy: { type: Schema.Types.ObjectId, ref: "users", required: true },

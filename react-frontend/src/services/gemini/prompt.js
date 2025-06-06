@@ -82,9 +82,7 @@ class GeminiService {
         - genre: Best-fit genre label (e.g. "Pop", "Indie Rock", "Acoustic")
         - compositionScore: A numeric score from 0 to 100 reflecting the song’s composition quality
         - suggestions: One or two musical suggestions for improvement
-        - rawOutput: (Include your full original analysis as a string or nested explanation)
 
-        **Audio URL**: [{{audioFileUrl}}]  
         **Title**: ${title} 
         **Artist**: ${artist}
 
@@ -100,7 +98,7 @@ class GeminiService {
       });
 
       console.log("Generated song analysis:", response.text);
-      return JSON.parse(response.text);
+      return response.text;
     } catch (error) {
       console.error("Error analyzing song:", error);
       throw error;

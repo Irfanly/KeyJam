@@ -109,6 +109,8 @@ import ChordEditor from '../components/keyjam/ChordEditor';
 import LessonsList from '../components/keyjam/LessonsList';
 import CreateLesson from '../components/keyjam/CreateLesson';
 import LessonPage from '../components/keyjam/LessonPage';
+import SongAnalysisUpload from '../components/keyjam/SongAnalysisUpload';
+import SongAnalysis from '../components/keyjam/SongAnalysis';
 //  ~cb-add-import~
 
 const MyRouter = (props) => {
@@ -131,6 +133,8 @@ const MyRouter = (props) => {
             <Route path="/lessons" exact element={<LessonsList />} />
             <Route path="/lessons/create" exact element={<CreateLesson />} />
             <Route path="/lessons/:lessonId" exact element={<LessonPage />} />
+            <Route path="/songAnalysis" exact element={<SongAnalysisUpload />} />
+            <Route path="/songAnalysis/:singleSongAnalysisId" exact element={<SongAnalysis />} />
 
             <Route element={<ProtectedRoute redirectPath={'/dashboard'} />}>
             <Route path="/project" exact element={<Dashboard />} />

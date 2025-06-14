@@ -54,6 +54,57 @@ class GeminiService {
     }
   }
 
+  // Song Analysis
+  async songAnalysis(fileUrl, songDetails) {
+    const { title, artist } = songDetails;
+    console.log("Analyzing song:", fileUrl);
+    if (!fileUrl) {
+      throw new Error("File URL is required for analysis.");
+    }
+    // Upload the audio file to Gemini
+    const audioUpload = await ai.files.upload({
+      file: fileUrl,
+    });
+
+    // Prepare the prompt for song analysis
+    const prompt = 
+      `You are a professional music composition assistant.
+
+        Please analyze the following audio file and return a structured breakdown of the song's composition. The user has also provided the song title and artist for context.
+
+        Please structure your response as a JSON object with the following fields:
+
+        - melody: A short description of the song's melodic flow (e.g. "catchy and ascending")
+        - harmony: Chordal structure description (e.g. "uses I–IV–V progressions with minor 7ths")
+        - rhythm: Description of the groove, time signature, or syncopation (e.g. "steady 4/4 with backbeat")
+        - arrangement: The song structure (e.g. "Intro → Verse → Chorus → Bridge → Chorus → Outro")
+        - mood: The emotional tone (e.g. "uplifting", "melancholic", "relaxed")
+        - genre: Best-fit genre label (e.g. "Pop", "Indie Rock", "Acoustic")
+        - compositionScore: A numeric score from 0 to 100 reflecting the song’s composition quality
+        - suggestions: One or two musical suggestions for improvement
+
+        **Title**: ${title} 
+        **Artist**: ${artist}
+
+        Return the entire response in **valid JSON format**, following the field names exactly.`;
+
+    try {
+      const response = await ai.models.generateContent({
+        model: model,
+        contents: createUserContent([
+          createPartFromUri(audioUpload.uri, audioUpload.mimeType),
+          prompt,
+        ]),
+      });
+
+      console.log("Generated song analysis:", response.text);
+      return response.text;
+    } catch (error) {
+      console.error("Error analyzing song:", error);
+      throw error;
+    }
+  }
+
 }
 
 const gemini = new GeminiService();

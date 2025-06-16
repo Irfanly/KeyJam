@@ -74,6 +74,26 @@ const ChordSheets = (props) => {
     navigate(`/chordSheets/${sheetId}`);
   };
 
+  const deleteChordSheet = (sheetId) => {
+    client.service("chordSheets").remove(sheetId)
+      .then(() => {
+        setChordSheets(chordSheets.filter(sheet => sheet._id !== sheetId));
+        props.alert({
+          type: "success",
+          title: "Success",
+          message: "Chord sheet deleted successfully"
+        });
+      })
+      .catch((error) => {
+        console.error("Error deleting chord sheet:", error);
+        props.alert({
+          type: "error",
+          title: "Error",
+          message: "Failed to delete chord sheet"
+        });
+      });
+  }
+
   return (
     <ProjectLayout>
       <div className="p-5 md:p-6">
@@ -191,6 +211,7 @@ const ChordSheets = (props) => {
                         className="p-button-text p-button-danger p-button-sm" 
                         tooltip="Delete"
                         aria-label="Delete"
+                        onClick={() => deleteChordSheet(sheet._id)}
                       />
                     </div>
                   </div>

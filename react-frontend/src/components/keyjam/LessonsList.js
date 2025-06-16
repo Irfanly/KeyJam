@@ -8,7 +8,7 @@ import { Card } from 'primereact/card';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Toast } from 'primereact/toast';
 import { Tag } from 'primereact/tag';
-import { Book, Search, Youtube, Music, Filter, Video, Plus } from 'lucide-react';
+import { Book, Search, Youtube, Music, Filter, Video, Plus, Trash } from 'lucide-react';
 import { PrimeIcons } from 'primereact/api';
 import ProjectLayout from '../Layouts/ProjectLayout';
 import client from '../../services/restClient';
@@ -62,6 +62,29 @@ const LessonsList = (props) => {
 
   const viewLesson = (lessonId) => {
     navigate(`/lessons/${lessonId}`);
+  };
+
+  const deleteLesson = (lessonId) => {
+    client.service('lessons')
+      .remove(lessonId)
+      .then(() => {
+        setLessons(lessons.filter(lesson => lesson._id !== lessonId));
+        toast.current.show({ 
+          severity: 'success', 
+          summary: 'Success', 
+          detail: 'Lesson deleted successfully', 
+          life: 3000 
+        });
+      })
+      .catch(error => {
+        console.error('Error deleting lesson:', error);
+        toast.current.show({ 
+          severity: 'error', 
+          summary: 'Error', 
+          detail: 'Failed to delete lesson', 
+          life: 3000 
+        });
+      });
   };
 
   const getCategoryIcon = (category) => {
@@ -233,13 +256,19 @@ const LessonsList = (props) => {
                     </span>
                   </div>
                 </div>
-                
-                <div className="flex items-center text-xs text-indigo-600 font-medium">
-                  <span>View Lesson</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </div>
+                {props.user && lesson.createdBy === props.user._id && (
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering the viewLesson function
+                      if(window.confirm('Are you sure you want to delete this lesson?')) {
+                        deleteLesson(lesson._id);
+                      }
+                    }}
+                    className="p-2 rounded-full hover:bg-red-50 text-red-500 transition-colors"
+                  >
+                    <Trash size={18} />
+                  </button>
+                )}
               </div>
             </div>
           </div>

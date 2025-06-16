@@ -12,7 +12,8 @@ import {
   Music, 
   Library, 
   ChevronRight,
-  MenuIcon
+  MenuIcon,
+  AudioLines
 } from 'lucide-react';
 
 const AppSideBar = (props) => {
@@ -44,6 +45,12 @@ const AppSideBar = (props) => {
         label: "Chord Book",
         key: "chordBook",
         path: "/chordBook"
+      },
+      {
+        icon: <AudioLines size={20} />,
+        label: "Song Analysis",
+        key: "audio",
+        path: "/songAnalysis"
       }
     ];
 

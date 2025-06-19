@@ -105,7 +105,7 @@ import LandingPage from '../components/landingPage/landingPage';
 import ChordLibrary from '../components/keyjam/ChordLibrary';
 import ChordStudio from '../components/keyjam/ChordStudio';
 import ChordSheets from '../components/keyjam/ChordSheets';
-import ChordEditor from '../components/keyjam/ChordEditor';
+import ChordEditor from '../components/keyjam/chordEditor';
 import LessonsList from '../components/keyjam/LessonsList';
 import CreateLesson from '../components/keyjam/CreateLesson';
 import LessonPage from '../components/keyjam/LessonPage';
